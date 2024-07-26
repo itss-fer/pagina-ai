@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template
 import openai
 import os
 from dotenv import load_dotenv
@@ -12,25 +12,33 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # Crear la aplicación Flask
 app = Flask(__name__)
 
+# Reemplaza con tu ID de asistente
+ASSISTANT_ID = "asst_7AIYSnPimhTxKB7H7ppZAhrr"
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
-@app.route('/ask', methods=['POST'])
-def ask():
-    user_message = request.form.get('message')
+@app.route('/cortana-api', methods=['POST'])
+def cortana_api():
+    data = request.get_json()
+    user_question = data.get('question')
 
-    # Configura el modelo y parámetros para OpenAI
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=user_message,
-        max_tokens=150
+    # Consultar la API de OpenAI con el ID de asistente
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are an assistant."},
+            {"role": "user", "content": user_question}
+        ],
+        assistant_id=ASSISTANT_ID
     )
 
     # Extraer la respuesta
-    answer = response.choices[0].text.strip()
+    answer = response.choices[0].message['content'].strip()
 
-    return render_template('index.html', response=answer)
+    # Devolver la respuesta como JSON
+    return jsonify({'response': answer})
 
 if __name__ == '__main__':
     app.run(debug=True)
