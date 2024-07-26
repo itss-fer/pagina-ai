@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortana AI Assistant</title>
+    <style>
+        /* Dark theme with blue details */
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #03A9F4;
+        }
+        .textfield {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            background-color: #555;
+            color: #fff;
+        }
+        .textfield:focus {
+            outline: none;
+            background-color: #666;
+        }
+        .button {
+            background-color: #03A9F4;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #007ac1;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #555;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="cortana-icon.png" alt="Cortana Icon">
+            <h1>Cortana</h1>
+        </div>
+        <input type="text" id="question" class="textfield" placeholder="Escribe algo...">
+        <button class="button" id="ask-btn">Enviar</button>
+        <div id="response"></div>
+    </div>
 
+    <script>
+        document.getElementById("ask-btn").addEventListener("click", function() {
+            var question = document.getElementById("question").value;
+            fetch("/cortana-api", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ question: question })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = data.response;
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>
